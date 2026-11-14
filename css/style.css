@@ -1,0 +1,161 @@
+/* 1. 기본 초기화 및 반응형 박스 모델 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* 테두리나 여백이 추가되어도 전체 크기가 커지지 않게 고정 */
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #090d16;
+    color: #f8fafc;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x: hidden; /* 어떤 기기에서도 가로 스크롤이 생기지 않도록 원천 차단 */
+}
+
+/* 2. 로딩 화면 전체 래퍼 (화면 100% 덮기) */
+.loader-wrapper {
+    position: fixed; /* 스크롤과 무관하게 화면에 고정 */
+    inset: 0;        /* top: 0, right: 0, bottom: 0, left: 0 의 축약형 */
+    z-index: 9999;   /* 웹사이트의 모든 요소보다 무조건 가장 위에 위치 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
+}
+
+/* 화면이 열릴 때 위아래로 갈라지는 셔터 패널 */
+.shutter {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50vh; /* 화면 높이(Viewport Height)의 정확히 절반 */
+    background-color: #0b1120;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); /* 쫀득하고 묵직한 가속도 곡선 */
+    z-index: 1;
+}
+
+.top-shutter {
+    top: 0;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.bottom-shutter {
+    bottom: 0;
+    border-top: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+/* 3. 중앙 로딩 그래픽 컨테이너 */
+.loader-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* 기하학 코어 (모든 기기에서 정사각형 비율 유지) */
+.geo-core {
+    position: relative;
+    /* vmin: 화면의 가로/세로 중 짧은 쪽 기준으로 22% 크기 (모바일과 PC 모두 적당한 크기 유지) */
+    width: clamp(100px, 22vmin, 160px); 
+    aspect-ratio: 1 / 1; /* 가로:세로 비율을 1:1 정사각형으로 강제 고정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 바깥쪽 회전 링 */
+.outer-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-top-color: #38bdf8;
+    border-bottom-color: #818cf8;
+    border-radius: 50%;
+    animation: spinRight 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* 안쪽 역회전 링 */
+.inner-ring {
+    position: absolute;
+    width: 72%;
+    height: 72%;
+    border: 2px dashed rgba(56, 189, 248, 0.6);
+    border-radius: 50%;
+    animation: spinLeft 3s linear infinite;
+}
+
+/* 정중앙 코어 큐브 (다이아몬드 형태로 변형되며 맥동) */
+.center-cube {
+    width: 30%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+    animation: pulseCube 1.5s ease-in-out infinite alternate;
+}
+
+/* 텍스트 및 퍼센트 표시 (반응형 폰트 크기) */
+.loader-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.brand-name {
+    /* clamp(최소크기, 유동크기, 최대크기): 화면 크기에 맞춰 글자 크기 자동 조절 */
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 700;
+    letter-spacing: 0.3em; /* 글자 사이 간격을 넓혀 모던한 느낌 강조 */
+    color: #e2e8f0;
+}
+
+.percent {
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    font-family: monospace; /* 숫자가 바뀔 때 폭이 흔들리지 않도록 고정폭 글꼴 사용 */
+    color: #38bdf8;
+}
+
+/* 4. 로딩 완료 시 실행될 애니메이션 상태 클래스 */
+.loader-wrapper.loaded .loader-content {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.loader-wrapper.loaded .top-shutter {
+    transform: translateY(-100%); /* 위쪽 셔터가 화면 위로 완전히 올라감 */
+}
+
+.loader-wrapper.loaded .bottom-shutter {
+    transform: translateY(100%);  /* 아래쪽 셔터가 화면 아래로 완전히 내려감 */
+}
+
+/* 애니메이션 키프레임 정의 */
+@keyframes spinRight {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes spinLeft {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes pulseCube {
+    0% { transform: rotate(0deg) scale(0.85); border-radius: 4px; }
+    100% { transform: rotate(45deg) scale(1.1); border-radius: 2px; }
+}
+
+/* 임시 메인 화면 스타일 */
+.main-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}

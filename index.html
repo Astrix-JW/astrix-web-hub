@@ -2,14 +2,42 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <!-- 모든 기기에서 화면 배율과 너비를 기기 자체에 맞추는 필수 반응형 태그 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
     <title>아스트릭스 웹허브</title>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <h1>아스트릭스 웹허브</h1>
-    <p>재우의 웹 공작소 - 학교생활을 편하게 만드는 웹 앱 모음</p>
-    <hr>
-    <p>안녕하세요! 중앙 허브 페이지 준비중입니다.</p>
+
+    <!-- [인트로 로딩 UI 영역] -->
+    <div id="intro-loader" class="loader-wrapper">
+        <!-- 화면이 위아래로 갈라질 때 사용할 셔터 배경 -->
+        <div class="shutter top-shutter"></div>
+        <div class="shutter bottom-shutter"></div>
+
+        <!-- 중앙 기하학 애니메이션 코어 -->
+        <div class="loader-content">
+            <div class="geo-core">
+                <div class="ring outer-ring"></div>
+                <div class="ring inner-ring"></div>
+                <div class="center-cube"></div>
+            </div>
+            <div class="loader-text">
+                <span class="brand-name">ASTRIX HUB</span>
+                <span id="loading-percent" class="percent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- [실제 메인 웹사이트 영역] (로딩이 끝나면 드러남) -->
+    <div id="main-app" class="main-container">
+        <header class="top-banner">
+            <h1>아스트릭스 웹허브</h1>
+            <p>이곳에 상단 배너가 들어갈 예정입니다.</p>
+        </header>
+    </div>
+
+    <script src="./js/main.js"></script>
 </body>
 </html>
